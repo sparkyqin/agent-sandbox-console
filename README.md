@@ -2,7 +2,13 @@
 
 一个面向 AI Agent 的沙箱（Sandbox）管理控制台。基于业界主流 Agent 沙箱平台与底层编排实践调研设计，含完整交互原型。
 
-完整设计文档见 [DESIGN.md](./DESIGN.md)。
+## 文档
+
+| 文档 | 内容 |
+|---|---|
+| [DESIGN.md](./DESIGN.md) | 设计规格 — 模块清单、字段设计、状态机、安全模型、路线图 |
+| [INSIGHTS.md](./INSIGHTS.md) | 调研洞察 — 10 条关键洞察与避坑点（常见误区 → 业界实践 → 为什么） |
+| [agent.tsx](./agent.tsx) | 交互原型 — 8 模块完整界面，mock 数据驱动 |
 
 ## 功能模块
 
@@ -37,7 +43,9 @@ vite.config.ts     # Vite 配置
 tailwind.config.js # Tailwind 配置
 postcss.config.js  # PostCSS 配置
 tsconfig.json      # TypeScript 配置
-DESIGN.md          # 设计文档
+package.json       # 依赖与脚本
+DESIGN.md          # 设计规格
+INSIGHTS.md        # 调研洞察报告
 ```
 
 ## 设计要点
@@ -47,4 +55,4 @@ DESIGN.md          # 设计文档
 3. **idle 判定基于资源活动** — 避免误杀无人值守长跑 agent（不采用 Colab 式浏览器交互判 idle）
 4. **安全治理内建** — egress 白名单防数据外泄、Secret 加密分离、max_lifetime 强制销毁
 
-详见 [DESIGN.md](./DESIGN.md)。
+详见 [DESIGN.md](./DESIGN.md) 与 [INSIGHTS.md](./INSIGHTS.md)。

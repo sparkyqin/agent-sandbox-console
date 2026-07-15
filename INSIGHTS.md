@@ -1,6 +1,6 @@
 # Agent 沙箱控制台 · 调研洞察报告
 
-> 这份报告不是设计规格（那是 [DESIGN.md](./DESIGN.md) 的职责），而是调研过程中**提炼出的洞察与避坑点**——那些容易被自研方案忽视、或做错、值得铭记的判断。每条都给出"常见误区 → 业界实践 → 为什么"。
+> 这份报告不是设计规格（那是 [DESIGN.md](./DESIGN.md) 的职责），而是调研过程中**提炼出的洞察与避坑点**——那些容易被自研方案忽视、或做错、值得铭记的判断。每条都给出"常见误区 → 业界实践 → 为什么"。入门请先看 [README.md](./README.md)。
 
 调研对象：E2B、Daytona、Modal、Runloop、CodeSandbox SDK、Morph、Fly Machines 等沙箱即服务平台，以及 Firecracker、gVisor、Kata、Kubernetes（Pod/Probe/Resource/NetworkPolicy/RBAC/CSI/CRIU）、KEDA、Knative 等底层实践。
 
