@@ -20,6 +20,7 @@ Thumbs.db
 !index.html
 *.json
 !package.json
+!package-lock.json
 !tsconfig.json
 .research/
 research/
