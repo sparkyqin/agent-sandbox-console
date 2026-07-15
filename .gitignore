@@ -1,0 +1,30 @@
+# 依赖
+node_modules/
+
+# 构建产物
+dist/
+*.local
+
+# 日志
+*.log
+npm-debug.log*
+
+# 编辑器/系统
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# 调研缓存（不纳入版本管理）
+*.html
+!index.html
+*.json
+!package.json
+!tsconfig.json
+.research/
+research/
+legacy/
+pt/
+pt2/
+pt3/
+rancher-dashboard/
