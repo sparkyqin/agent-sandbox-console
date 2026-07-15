@@ -25,6 +25,8 @@
 
 技术栈：React 18 + Vite 5 + Tailwind CSS 3 + lucide-react。
 
+线上部署：https://agentsandbox.vercel.app（Vercel，push main 自动部署）
+
 ```bash
 npm install      # 安装依赖
 npm run dev      # 开发模式，打开 http://localhost:5173
