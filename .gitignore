@@ -15,13 +15,22 @@ npm-debug.log*
 .DS_Store
 Thumbs.db
 
+# BFF 本地数据（SQLite 等）
+apps/bff/data/
+*.sqlite
+*.sqlite-journal
+*.sqlite-shm
+*.sqlite-wal
+
+# 环境变量（含 API key，不入库）
+.env
+.env.local
+.env.*.local
+!.env.example
+
 # 调研缓存（不纳入版本管理）
 *.html
 !index.html
-*.json
-!package.json
-!package-lock.json
-!tsconfig.json
 .research/
 research/
 legacy/

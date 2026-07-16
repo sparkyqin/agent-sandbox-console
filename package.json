@@ -1,23 +1,18 @@
 {
   "name": "agentsandbox",
+  "version": "0.2.0",
   "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "description": "面向 AI Agent 的沙箱管理控制台 — 基于 OpenSandbox 运行时",
+  "license": "Apache-2.0",
+  "packageManager": "pnpm@9.15.0",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview --port 4173"
+    "dev": "pnpm -r --parallel --stream run dev",
+    "dev:web": "pnpm --filter @agentsandbox/web dev",
+    "dev:bff": "pnpm --filter @agentsandbox/bff dev",
+    "build": "pnpm -r run build",
+    "typecheck": "pnpm -r run typecheck"
   },
-  "dependencies": {
-    "lucide-react": "^0.400.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
-  },
-  "devDependencies": {
-    "@vitejs/plugin-react": "^4.3.1",
-    "autoprefixer": "^10.4.19",
-    "postcss": "^8.4.39",
-    "tailwindcss": "^3.4.6",
-    "vite": "^5.3.4"
+  "engines": {
+    "node": ">=20"
   }
 }
