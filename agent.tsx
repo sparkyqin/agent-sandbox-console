@@ -43,6 +43,8 @@ import {
   Filter,
   Bookmark,
   Download,
+  MoreHorizontal,
+  Sparkles,
 } from 'lucide-react';
 
 /* =========================================================================
@@ -76,16 +78,38 @@ const INITIAL_TOOLS = [
 
 // 状态机：creating -> running -> (paused | hibernating | stopped) -> terminated | error
 const INSTANCES = [
-  { id: 'sbx-001', name: 'agent-sandbox-001', status: 'running', image: 'C++ 编译环境', base: 'Standard Agent Base', cpu: 62, mem: 48, restarts: 0, ready: '1/1', uptime: '2h 14m', region: 'cn-east-1', owner: 'Admin', project: 'codegen', cost: '¥1.82', tags: ['prod', 'codegen'], created: '2026-07-15 09:21', cpuReq: 2, memReq: 4096, gpu: 'none', ports: [{ port: 8080, route: 'api', proto: 'HTTP' }], url: 'https://sbx-001-8080.sandbox.dev' },
-  { id: 'sbx-002', name: 'data-pipeline-runner', status: 'running', image: '数据分析环境', base: 'Standard Agent Base', cpu: 88, mem: 73, restarts: 1, ready: '1/1', uptime: '5h 02m', region: 'cn-east-1', owner: 'DataTeam', project: 'etl', cost: '¥6.40', tags: ['prod', 'etl'], created: '2026-07-15 06:33', cpuReq: 4, memReq: 8192, gpu: 'none', ports: [], url: '' },
-  { id: 'sbx-003', name: 'research-agent-dev', status: 'paused', image: 'Node 全栈环境', base: 'Standard Agent Base', cpu: 0, mem: 12, restarts: 0, ready: '0/1', uptime: '—', region: 'cn-east-2', owner: 'Rex', project: 'research', cost: '¥0.31', tags: ['dev'], created: '2026-07-14 22:10', cpuReq: 2, memReq: 4096, gpu: 'none', ports: [{ port: 3000, route: 'web', proto: 'HTTP' }], url: 'https://sbx-003-3000.sandbox.dev' },
-  { id: 'sbx-004', name: 'gpu-inference-bench', status: 'error', image: 'C++ 编译环境', base: 'Standard Agent Base', cpu: 0, mem: 0, restarts: 3, ready: '0/1', uptime: '—', region: 'cn-east-2', owner: 'MLLab', project: 'inference', cost: '¥12.05', tags: ['bench', 'gpu'], created: '2026-07-15 11:02', cpuReq: 8, memReq: 16384, gpu: 'A100', ports: [], url: '' },
-  { id: 'sbx-005', name: 'scratch-test-77', status: 'terminated', image: '无叠加', base: 'Standard Agent Base', cpu: 0, mem: 0, restarts: 0, ready: '—', uptime: '—', region: 'cn-east-1', owner: 'Admin', project: 'scratch', cost: '¥0.04', tags: ['test'], created: '2026-07-13 18:44', cpuReq: 1, memReq: 2048, gpu: 'none', ports: [], url: '' },
+  { id: 'sbx-001', name: 'agent-sandbox-001', status: 'running', image: 'C++ 编译环境', base: 'Standard Agent Base', cpu: 62, mem: 48, restarts: 0, ready: '1/1', uptime: '2h 14m', region: 'cn-east-1', owner: 'Admin', project: 'codegen', cost: '¥1.82', tags: ['prod', 'codegen'], created: '2026-07-15 09:21', cpuReq: 2, memReq: 4096, gpu: 'none', ports: [{ port: 8080, route: 'api', proto: 'HTTP' }], url: 'https://sbx-001-8080.sandbox.dev', hint: '任务进行中 · 消息间自动挂起已启用', hintKind: 'auto', forks: [{ name: 'explore-v2-a', ago: '2h 前', adopted: false }, { name: 'explore-v2-b', ago: '1h 前', adopted: true }] },
+  { id: 'sbx-002', name: 'data-pipeline-runner', status: 'running', image: '数据分析环境', base: 'Standard Agent Base', cpu: 88, mem: 73, restarts: 1, ready: '1/1', uptime: '5h 02m', region: 'cn-east-1', owner: 'DataTeam', project: 'etl', cost: '¥6.40', tags: ['prod', 'etl'], created: '2026-07-15 06:33', cpuReq: 4, memReq: 8192, gpu: 'none', ports: [], url: '', hint: '高负载 · 预算 42% · 限流保护中', hintKind: 'budget' },
+  { id: 'sbx-003', name: 'research-agent-dev', status: 'hibernating', image: 'Node 全栈环境', base: 'Standard Agent Base', cpu: 0, mem: 0, restarts: 0, ready: '0/1', uptime: '—', region: 'cn-east-2', owner: 'Rex', project: 'research', cost: '¥0.31', tags: ['dev'], created: '2026-07-14 22:10', cpuReq: 2, memReq: 4096, gpu: 'none', ports: [{ port: 3000, route: 'web', proto: 'HTTP' }], url: 'https://sbx-003-3000.sandbox.dev', hint: 'idle 8m 下沉休眠 · 内存已落盘', hintKind: 'auto' },
+  { id: 'sbx-004', name: 'gpu-inference-bench', status: 'error', image: 'C++ 编译环境', base: 'Standard Agent Base', cpu: 0, mem: 0, restarts: 3, ready: '0/1', uptime: '—', region: 'cn-east-2', owner: 'MLLab', project: 'inference', cost: '¥12.05', tags: ['bench', 'gpu'], created: '2026-07-15 11:02', cpuReq: 8, memReq: 16384, gpu: 'A100', ports: [], url: '', hint: '探针失败 3 次 · 需人工介入', hintKind: 'alert' },
+  { id: 'sbx-005', name: 'scratch-test-77', status: 'terminated', image: '无叠加', base: 'Standard Agent Base', cpu: 0, mem: 0, restarts: 0, ready: '—', uptime: '—', region: 'cn-east-1', owner: 'Admin', project: 'scratch', cost: '¥0.04', tags: ['test'], created: '2026-07-13 18:44', cpuReq: 1, memReq: 2048, gpu: 'none', ports: [], url: '', hint: 'max_lifetime 到期 · 自动销毁', hintKind: 'auto' },
+  { id: 'sbx-006', name: 'doc-translation', status: 'stopped', image: '数据分析环境', base: 'Standard Agent Base', cpu: 0, mem: 0, restarts: 0, ready: '0/1', uptime: '—', region: 'cn-east-1', owner: 'Rex', project: 'docs', cost: '¥0.00', tags: ['dev', 'docs'], created: '2026-07-15 08:20', cpuReq: 2, memReq: 4096, gpu: 'none', ports: [], url: '', hint: 'idle 超时已停止 · 卷保留', hintKind: 'auto' },
 ];
+
+// 会话状态（任务进度）——刻意独立于 VM 生命周期存储（对标 Cursor 把 agent loop 外置到 Temporal：
+// VM 可休眠/换 pod/销毁，会话进度不丢）。此层由系统独管，控制台只读，运维不可操作。
+const SESSIONS = {
+  'sbx-001': { task: '重构 parser 模块',          step: 12, total: 18, lastActive: '2m 前',  vmNote: '运行中',          resume: '消息间自动挂起/恢复' },
+  'sbx-002': { task: '数据管道迁移至 v2',          step: 5,  total: 5,  lastActive: '12s 前', vmNote: '运行中·验收阶段', resume: '消息间自动挂起/恢复' },
+  'sbx-003': { task: '调研向量数据库选型',         step: 3,  total: 7,  lastActive: '8m 前',  vmNote: 'VM 已暂停',       resume: '下条消息自动唤醒，或迁移至其他 pod 续跑' },
+  'sbx-004': { task: 'GPU kernel 优化',            step: 4,  total: 10, lastActive: '14m 前', vmNote: '探针失败·VM 异常', resume: '会话进度已保存，人工介入后可恢复' },
+  'sbx-005': { task: '临时测试脚本',               step: 1,  total: 1,  lastActive: '—',      vmNote: 'VM 已销毁',       resume: 'max_lifetime 到期，会话已归档' },
+  'sbx-006': { task: '文档批量翻译',               step: 2,  total: 6,  lastActive: '3h 前',  vmNote: 'VM 已停止·卷保留', resume: '冷启挂回持久卷续跑（~30s）' },
+};
 
 const INITIAL_TEMPLATES = [
   { id: 'tpl-cpp', name: 'C++ Agent 标准模板', image: 'C++ 编译环境', size: 'medium', cpu: 2, mem: 4096, tools: ['git', 'curl'], tags: ['prod'], desc: '面向 C++ 代码生成的标准配置。', updated: '2026-07-10' },
   { id: 'tpl-data', name: '数据流水线模板', image: '数据分析环境', size: 'large', cpu: 4, mem: 8192, tools: ['git', 'python-pip'], tags: ['etl'], desc: '高内存数据分析运行环境。', updated: '2026-07-08' },
+];
+
+/* 环境快照（Cold）——磁盘级可复用环境模板，开发者拥有，跨实例共享。
+   刻意从「实例详情」抽出：它的语义不是「恢复这个实例」，而是「作为新实例的环境来源」
+   （对标 Cursor .cursor/environment.json 的 "snapshot" 字段）。
+   status: ready=可用 / degraded=快照失效已 fallback 到默认 base image（环境就绪·有警告）/ expired=过期不可用 */
+const ENV_SNAPSHOTS = [
+  { id: 'envsnap-cpp-0715', source: 'agent-sandbox-001', label: 'C++ 编译环境 · 含 clang-18/cmake', deps: 'clang-18, cmake, ninja, boost', size: '1.2 GB', created: '2026-07-15 09:00', ttl: '14 天', status: 'ready', refs: 3 },
+  { id: 'envsnap-data-0714', source: 'data-pipeline-runner', label: '数据分析环境 · 含 pandas/spark', deps: 'python-3.12, pandas, pyspark, jupyter', size: '2.8 GB', created: '2026-07-14 06:30', ttl: '7 天', status: 'degraded', refs: 1 },
+  { id: 'envsnap-node-0710', source: 'research-agent-dev', label: 'Node 全栈环境 · 含 pnpm/prisma', deps: 'node-20, pnpm, prisma, redis-cli', size: '980 MB', created: '2026-07-10 22:10', ttl: '已过期', status: 'expired', refs: 0 },
 ];
 
 const INGRESS_ROUTES = [
@@ -96,7 +120,7 @@ const INGRESS_ROUTES = [
 
 // 配额（全局）
 const QUOTA = {
-  used: { instances: 5, cpu: 17, mem: 36864, gpu: 1, storage: 48 },
+  used: { instances: 6, cpu: 19, mem: 40960, gpu: 1, storage: 68 },
   limit: { instances: 20, cpu: 64, mem: 131072, gpu: 4, storage: 500 },
   budgetMonthly: 2000,
   spentMonth: 412.6,
@@ -168,9 +192,11 @@ const NAV_ITEMS = [
   { key: 'create',    label: '创建实例', icon: Plus },
   { key: 'cost',      label: '成本配额', icon: Gauge },
   { key: 'images',    label: '镜像库',   icon: Layers },
+  { key: 'envsnap',   label: '环境快照', icon: HardDrive },
   { key: 'tools',     label: '工具箱',   icon: Wrench },
   { key: 'templates', label: '模板库',   icon: Bookmark },
   { key: 'network',   label: '网络域名', icon: Network },
+  { key: 'settings',  label: '系统设置', icon: Settings },
 ];
 
 const TopNav = ({ activeTab, setActiveTab }) => (
@@ -209,6 +235,7 @@ const InstanceList = ({ setActiveTab, setSelectedInstance }) => {
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState([]);
+  const [menuOpen, setMenuOpen] = useState(null); // 展开「手动覆盖」菜单的实例 id
 
   const filtered = INSTANCES.filter(i =>
     (filter === 'all' || i.status === filter) &&
@@ -218,22 +245,42 @@ const InstanceList = ({ setActiveTab, setSelectedInstance }) => {
   const toggle = (id) => setSelected(s => s.includes(id) ? s.filter(x => x !== id) : [...s, id]);
   const allChecked = filtered.length > 0 && filtered.every(i => selected.includes(i.id));
 
+  // 生命周期由平台策略自动管理；终端/日志是高频「观测+干预」入口，常驻可见；
+  // 启停/休眠/销毁/Fork/快照属「手动覆盖（异常用）」，收进溢出菜单。
+  const HINT_STYLE = {
+    auto:   'text-gray-400',
+    budget: 'text-amber-600',
+    alert:  'text-red-600',
+  };
+
   const rowActions = (i) => {
     const base = 'p-1.5 rounded hover:bg-gray-100 transition-colors';
-    const running = i.status === 'running';
     return (
-      <div className="flex items-center gap-0.5">
-        {running
-          ? <button title="暂停" className={`${base} text-amber-600 hover:text-amber-700`}><Pause className="w-4 h-4" /></button>
-          : <button title="启动" className={`${base} text-emerald-600 hover:text-emerald-700`}><Play className="w-4 h-4" /></button>}
-        <button title="重启" className={`${base} text-gray-500 hover:text-blue-600`}><RotateCw className="w-4 h-4" /></button>
-        <button title="休眠" className={`${base} text-sky-600 hover:text-sky-700`}><Power className="w-4 h-4" /></button>
-        <button title="销毁" className={`${base} text-red-500 hover:text-red-600`}><Trash2 className="w-4 h-4" /></button>
+      <div className="flex items-center justify-end gap-0.5 relative">
+        <button title="终端" onClick={() => setSelectedInstance(i.id)} className={`${base} text-gray-500 hover:text-gray-800`}><Terminal className="w-4 h-4" /></button>
+        <button title="日志" onClick={() => setSelectedInstance(i.id)} className={`${base} text-gray-500 hover:text-gray-800`}><FileText className="w-4 h-4" /></button>
         <span className="w-px h-4 bg-gray-200 mx-1" />
-        <button title="终端" className={`${base} text-gray-500 hover:text-gray-800`}><Terminal className="w-4 h-4" /></button>
-        <button title="日志" className={`${base} text-gray-500 hover:text-gray-800`}><FileText className="w-4 h-4" /></button>
-        <button title="快照" className={`${base} text-gray-500 hover:text-gray-800`}><Save className="w-4 h-4" /></button>
-        <button title="Fork" className={`${base} text-gray-500 hover:text-gray-800`}><GitBranch className="w-4 h-4" /></button>
+        <button title="手动覆盖（异常用）" onClick={() => setMenuOpen(menuOpen === i.id ? null : i.id)}
+          className={`${base} text-gray-500 hover:text-gray-800 flex items-center gap-1`}>
+          <MoreHorizontal className="w-4 h-4" />
+        </button>
+        {menuOpen === i.id && (
+          <>
+            <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(null)} />
+            <div className="absolute right-0 top-8 z-20 w-48 bg-white border border-gray-200 rounded-lg shadow-lg py-1 text-sm">
+              <div className="px-3 py-1 text-[10px] uppercase tracking-wide text-gray-400">手动覆盖 · 异常用</div>
+              <button className="w-full text-left px-3 py-1.5 hover:bg-gray-50 text-gray-700 flex items-center gap-2"><Play className="w-3.5 h-3.5 text-emerald-600" />启动</button>
+              <button className="w-full text-left px-3 py-1.5 hover:bg-gray-50 text-gray-700 flex items-center gap-2"><Pause className="w-3.5 h-3.5 text-amber-600" />暂停</button>
+              <button className="w-full text-left px-3 py-1.5 hover:bg-gray-50 text-gray-700 flex items-center gap-2"><Power className="w-3.5 h-3.5 text-sky-600" />休眠</button>
+              <button className="w-full text-left px-3 py-1.5 hover:bg-gray-50 text-gray-700 flex items-center gap-2"><RotateCw className="w-3.5 h-3.5 text-gray-600" />重启</button>
+              <div className="border-t my-1" />
+              <button className="w-full text-left px-3 py-1.5 hover:bg-gray-50 text-gray-700 flex items-center gap-2"><GitBranch className="w-3.5 h-3.5 text-purple-600" />Fork 试错</button>
+              <button className="w-full text-left px-3 py-1.5 hover:bg-gray-50 text-gray-700 flex items-center gap-2"><Save className="w-3.5 h-3.5 text-blue-600" />打快照</button>
+              <div className="border-t my-1" />
+              <button className="w-full text-left px-3 py-1.5 hover:bg-red-50 text-red-600 flex items-center gap-2"><Trash2 className="w-3.5 h-3.5" />强制销毁</button>
+            </div>
+          </>
+        )}
       </div>
     );
   };
@@ -271,7 +318,7 @@ const InstanceList = ({ setActiveTab, setSelectedInstance }) => {
                 className="pl-9 pr-3 py-1.5 border border-gray-300 rounded-lg text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 w-56" />
             </div>
             <div className="flex items-center gap-1 border border-gray-200 rounded-lg p-0.5">
-              {['all', 'running', 'paused', 'error', 'terminated'].map(f => (
+              {['all', 'running', 'paused', 'hibernating', 'stopped', 'error', 'terminated'].map(f => (
                 <button key={f} onClick={() => setFilter(f)}
                   className={`px-2.5 py-1 rounded text-xs font-medium ${filter === f ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'}`}>
                   {f === 'all' ? '全部' : STATUS_META[f]?.label}
@@ -324,11 +371,23 @@ const InstanceList = ({ setActiveTab, setSelectedInstance }) => {
                       {i.name} <ChevronRight className="w-3 h-3 opacity-0 group-hover:opacity-100" />
                     </button>
                     <div className="text-xs text-gray-400 font-mono">{i.id}</div>
-                    <div className="flex gap-1 mt-1 flex-wrap">
+                    <div className="flex gap-1 mt-1 flex-wrap items-center">
                       {i.tags.map(t => <span key={t} className="text-[10px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-500">{t}</span>)}
+                      {i.forks && i.forks.length > 0 && (
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-purple-50 text-purple-600 flex items-center gap-0.5" title={`派生 ${i.forks.length} 个分支：${i.forks.map(f => f.name).join(', ')}${i.forks.some(f => f.adopted) ? '（已采纳分支）' : ''}`}>
+                          <GitBranch className="w-2.5 h-2.5" />{i.forks.length} Fork{i.forks.some(f => f.adopted) && <span className="text-emerald-600">·采纳</span>}
+                        </span>
+                      )}
                     </div>
                   </td>
-                  <td className="px-4 py-3"><StatusBadge status={i.status} /></td>
+                  <td className="px-4 py-3">
+                    <StatusBadge status={i.status} />
+                    {i.hint && <div className={`text-[11px] mt-1 flex items-center gap-1 ${HINT_STYLE[i.hintKind] || 'text-gray-400'}`}>
+                      {i.hintKind === 'auto' && <Sparkles className="w-3 h-3" />}
+                      {i.hintKind === 'alert' && <AlertTriangle className="w-3 h-3" />}
+                      {i.hint}
+                    </div>}
+                  </td>
                   <td className="px-4 py-3">
                     <div className="text-gray-700">{i.image}</div>
                     <div className="text-xs text-gray-400">{i.gpu !== 'none' ? `GPU: ${i.gpu}` : '无 GPU'}</div>
@@ -377,6 +436,7 @@ const InstanceDetail = ({ instance, onBack }) => {
   if (!instance) return null;
   const subTabs = [
     { key: 'overview', label: '概览', icon: Info },
+    { key: 'session',  label: '会话', icon: Clock },
     { key: 'logs',     label: '日志', icon: FileText },
     { key: 'terminal', label: '终端', icon: Terminal },
     { key: 'metrics',  label: '监控', icon: Activity },
@@ -406,16 +466,34 @@ const InstanceDetail = ({ instance, onBack }) => {
             </div>
           </div>
           <div className="flex items-center gap-1.5">
-            {instance.status === 'running'
-              ? <button className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100"><Pause className="w-4 h-4" />暂停</button>
-              : <button className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100"><Play className="w-4 h-4" />启动</button>}
-            <button className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm bg-gray-50 text-gray-700 border border-gray-200 hover:bg-gray-100"><RotateCw className="w-4 h-4" />重启</button>
-            <button className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm bg-sky-50 text-sky-700 border border-sky-200 hover:bg-sky-100"><Power className="w-4 h-4" />休眠</button>
+            {instance.hint && (
+              <span className={`hidden md:inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs border ${instance.hintKind === 'alert' ? 'bg-red-50 text-red-700 border-red-200' : instance.hintKind === 'budget' ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-gray-50 text-gray-500 border-gray-200'}`}>
+                {instance.hintKind === 'auto' && <Sparkles className="w-3 h-3" />}
+                {instance.hintKind === 'alert' && <AlertTriangle className="w-3 h-3" />}
+                {instance.hint}
+              </span>
+            )}
             <button className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm bg-purple-50 text-purple-700 border border-purple-200 hover:bg-purple-100"><GitBranch className="w-4 h-4" />Fork</button>
-            <button className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm bg-red-50 text-red-600 border border-red-200 hover:bg-red-100"><Trash2 className="w-4 h-4" />销毁</button>
+            <button className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm bg-gray-50 text-gray-700 border border-gray-200 hover:bg-gray-100"><Terminal className="w-4 h-4" />终端</button>
+            <div className="relative group">
+              <button className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm bg-gray-50 text-gray-700 border border-gray-200 hover:bg-gray-100">
+                <MoreHorizontal className="w-4 h-4" /> 手动覆盖
+              </button>
+              <div className="absolute right-0 top-full mt-1 w-44 bg-white border border-gray-200 rounded-lg shadow-lg py-1 text-sm opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
+                <button className="w-full text-left px-3 py-1.5 hover:bg-gray-50 text-gray-700 flex items-center gap-2"><Play className="w-3.5 h-3.5 text-emerald-600" />启动</button>
+                <button className="w-full text-left px-3 py-1.5 hover:bg-gray-50 text-gray-700 flex items-center gap-2"><Pause className="w-3.5 h-3.5 text-amber-600" />暂停</button>
+                <button className="w-full text-left px-3 py-1.5 hover:bg-gray-50 text-gray-700 flex items-center gap-2"><Power className="w-3.5 h-3.5 text-sky-600" />休眠</button>
+                <button className="w-full text-left px-3 py-1.5 hover:bg-gray-50 text-gray-700 flex items-center gap-2"><RotateCw className="w-3.5 h-3.5 text-gray-600" />重启</button>
+                <div className="border-t my-1" />
+                <button className="w-full text-left px-3 py-1.5 hover:bg-red-50 text-red-600 flex items-center gap-2"><Trash2 className="w-3.5 h-3.5" />强制销毁</button>
+              </div>
+            </div>
           </div>
         </div>
       </Card>
+
+      {/* 会话状态横幅 —— 独立于 VM 生命周期，让"VM 休眠 ≠ 任务丢失"显式可见 */}
+      <SessionBanner instance={instance} />
 
       {/* 子 Tab */}
       <div className="flex items-center gap-1 border-b border-gray-200">
@@ -432,6 +510,7 @@ const InstanceDetail = ({ instance, onBack }) => {
 
       {/* 子内容 */}
       {sub === 'overview' && <DetailOverview instance={instance} />}
+      {sub === 'session' && <DetailSession instance={instance} />}
       {sub === 'logs' && <DetailLogs />}
       {sub === 'terminal' && <DetailTerminal />}
       {sub === 'metrics' && <DetailMetrics instance={instance} />}
@@ -447,6 +526,125 @@ const KV = ({ k, v, mono }) => (
     <span className={`text-sm text-gray-800 ${mono ? 'font-mono text-xs' : ''}`}>{v}</span>
   </div>
 );
+
+/* 会话状态横幅：VM 状态 vs 会话进度并排呈现，核心信息"VM 休眠 ≠ 任务丢失"。
+   此层系统独管，只读——无任何操作按钮，运维只能看。 */
+const SessionBanner = ({ instance }) => {
+  const s = SESSIONS[instance.id];
+  if (!s) return null;
+  const vmAlive = ['running', 'paused', 'hibernating', 'creating'].includes(instance.status);
+  const sessionAlive = instance.status !== 'terminated';
+  return (
+    <Card className="p-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+        {/* 会话进度 */}
+        <div className="md:col-span-2">
+          <div className="flex items-center gap-2 mb-2">
+            <Clock className="w-4 h-4 text-blue-500" />
+            <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">会话进度（系统托管 · 只读）</span>
+            <span className={`text-[11px] px-1.5 py-0.5 rounded ${sessionAlive ? 'bg-emerald-50 text-emerald-600' : 'bg-gray-100 text-gray-400'}`}>
+              {sessionAlive ? '进度已持久化' : '已归档'}
+            </span>
+          </div>
+          <div className="font-medium text-gray-800 text-sm">{s.task}</div>
+          <div className="mt-2">
+            <div className="flex justify-between text-xs text-gray-500 mb-1">
+              <span>步骤 {s.step} / {s.total}</span>
+              <span>最近活动 {s.lastActive}</span>
+            </div>
+            <ProgressBar value={Math.round((s.step / s.total) * 100)} />
+          </div>
+        </div>
+        {/* VM 状态对照 */}
+        <div className="md:border-l md:pl-4">
+          <div className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">VM 运行态</div>
+          <div className="text-sm text-gray-700 font-medium">{s.vmNote}</div>
+          <div className={`text-xs mt-1.5 flex items-start gap-1 ${vmAlive ? 'text-gray-500' : sessionAlive ? 'text-amber-600' : 'text-gray-400'}`}>
+            <Sparkles className="w-3 h-3 mt-0.5 shrink-0" />
+            <span>{s.resume}</span>
+          </div>
+          {!vmAlive && sessionAlive && (
+            <div className="mt-2 text-[11px] px-2 py-1 rounded bg-amber-50 text-amber-700 border border-amber-200">
+              ⚠ VM 已停 · 任务进度未丢，可换 pod 续跑
+            </div>
+          )}
+        </div>
+      </div>
+    </Card>
+  );
+};
+
+/* 会话子页：完整的会话/任务进度视图。系统独管层，全部只读，无操作按钮。 */
+const DetailSession = ({ instance }) => {
+  const s = SESSIONS[instance.id];
+  if (!s) return <Card className="p-8 text-center text-gray-400">该实例无会话记录</Card>;
+  const steps = [
+    { n: 1, label: '解析任务', done: true },
+    { n: 2, label: '加载环境', done: true },
+    { n: 3, label: '克隆仓库', done: true },
+    { n: 4, label: '分析代码', done: s.step >= 4 },
+    { n: 5, label: '生成方案', done: s.step >= 5 },
+    { n: 6, label: '执行修改', done: s.step >= 6 },
+    { n: 7, label: '运行测试', done: s.step >= 7 },
+    { n: 8, label: '提交变更', done: s.step >= 8 },
+  ];
+  const timeline = [
+    { t: '09:21:18', e: '会话创建 · 任务接入', k: 'sys' },
+    { t: '09:22:05', e: '环境就绪 · 开始执行', k: 'sys' },
+    { t: '09:23:41', e: '构建失败 · 自动重试（第 1 次）', k: 'warn' },
+    { t: '09:25:33', e: '构建成功 · 进入步骤 4', k: 'sys' },
+    { t: '09:31:02', e: 'VM 消息间挂起 · 会话进度已持久化', k: 'hibernate' },
+    { t: '09:31:48', e: '下条消息到达 · VM 自动恢复', k: 'resume' },
+  ];
+  const tColor = { sys: 'text-gray-500', warn: 'text-amber-600', hibernate: 'text-sky-600', resume: 'text-emerald-600' };
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <Card className="p-5 lg:col-span-2">
+          <SectionTitle icon={<Clock className="w-5 h-5 text-blue-500" />} title="任务执行进度" desc="会话状态由系统托管（外置于工作流引擎），VM 生命周期变化不影响任务进度。" />
+          <div className="flex items-center gap-1 mt-3 overflow-x-auto pb-2">
+            {steps.map((st, i) => (
+              <React.Fragment key={st.n}>
+                <div className={`flex flex-col items-center gap-1 shrink-0 w-20 ${st.done ? '' : 'opacity-40'}`}>
+                  <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium ${st.done ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-400'}`}>
+                    {st.done ? <CheckCircle className="w-4 h-4" /> : st.n}
+                  </div>
+                  <span className="text-[10px] text-gray-500 text-center">{st.label}</span>
+                </div>
+                {i < steps.length - 1 && <div className={`h-0.5 w-6 ${st.done && steps[i+1].done ? 'bg-emerald-300' : 'bg-gray-200'}`} />}
+              </React.Fragment>
+            ))}
+          </div>
+          <div className="border-t mt-3 pt-3">
+            <div className="text-xs text-gray-500 mb-2">会话事件流（系统记录）</div>
+            <div className="space-y-1.5 text-xs">
+              {timeline.map((l, i) => (
+                <div key={i} className="flex gap-3">
+                  <span className="text-gray-400 font-mono">{l.t}</span>
+                  <span className={tColor[l.k]}>{l.e}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Card>
+        <Card className="p-5 space-y-1">
+          <SectionTitle icon={<Info className="w-5 h-5 text-blue-500" />} title="会话信息" />
+          <KV k="任务" v={s.task} />
+          <KV k="进度" v={`${s.step} / ${s.total} 步`} />
+          <KV k="最近活动" v={s.lastActive} />
+          <KV k="VM 状态" v={s.vmNote} />
+          <KV k="恢复策略" v={s.resume} />
+          <div className="border-t pt-2 mt-2">
+            <div className="text-xs text-gray-500 leading-relaxed bg-blue-50 border border-blue-100 rounded-lg p-3 flex gap-2">
+              <Sparkles className="w-3.5 h-3.5 text-blue-500 shrink-0 mt-0.5" />
+              <span>会话进度外置于工作流引擎，独立于 VM 存活。VM 休眠、换 pod、甚至销毁，任务进度都不丢——这是长跑 agent（跨小时/跨天）能稳定续跑的前提。</span>
+            </div>
+          </div>
+        </Card>
+      </div>
+    </div>
+  );
+};
 
 const DetailOverview = ({ instance }) => (
   <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -654,20 +852,28 @@ const DetailEvents = () => {
 };
 
 const DetailSnapshot = ({ instance }) => {
+  // 实例详情只留 Warm（内存级）快照——恢复运行态 + Fork 试错，是合法的「单实例」操作。
+  // Cold（磁盘级）快照已迁移到「环境快照」页：它的语义是「作为新实例的环境来源」而非「恢复本实例」。
   const snaps = [
-    { id: 'snap-a1', type: 'warm', label: '内存快照（含进程/内存）', time: '09:25:00', size: '812 MB', restore: '~1.5s' },
-    { id: 'snap-b2', type: 'cold', label: '磁盘卷快照（仅文件系统）', time: '09:00:00', size: '1.2 GB', restore: '~6s' },
+    { id: 'snap-a1', label: '内存快照（含进程/内存）', time: '09:25:00', size: '812 MB', restore: '~1.5s' },
   ];
+  // 环境降级态：对标 Cursor「快照失效 → fallback 默认 base image，标 Environment ready (with warnings)」
+  const envDegraded = instance.id === 'sbx-002';
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
       <Card className="p-5 lg:col-span-2">
-        <SectionTitle icon={<Save className="w-5 h-5 text-blue-500" />} title="快照列表" desc="Warm 快照含内存与进程（CRIU/microVM 内存快照），可秒级恢复并 1-to-many Fork；Cold 快照仅含磁盘卷（CSI VolumeSnapshot）。" />
+        <SectionTitle icon={<Save className="w-5 h-5 text-blue-500" />} title="Warm 快照（内存级）"
+          desc="含进程树+内存+FD+socket，秒级恢复并支持 1-to-many Fork。系统在消息间自动维护，此处可手动打点。Cold 磁盘快照已移至「环境快照」页。" />
+        {envDegraded && (
+          <div className="mb-3 flex items-start gap-2 px-3 py-2 rounded-lg bg-amber-50 border border-amber-200 text-amber-700 text-xs">
+            <AlertTriangle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+            <span>环境快照已失效，已自动降级为默认 base image。<strong>Environment ready (with warnings)</strong> —— 新 agent 起来时依赖需重装，可能影响首条消息质量。</span>
+          </div>
+        )}
         <div className="space-y-3">
           {snaps.map(s => (
             <div key={s.id} className="flex items-center gap-4 p-3 border border-gray-200 rounded-lg hover:border-blue-300">
-              <div className={`p-2 rounded-lg ${s.type === 'warm' ? 'bg-orange-50 text-orange-600' : 'bg-sky-50 text-sky-600'}`}>
-                {s.type === 'warm' ? <Zap className="w-5 h-5" /> : <HardDrive className="w-5 h-5" />}
-              </div>
+              <div className="p-2 rounded-lg bg-orange-50 text-orange-600"><Zap className="w-5 h-5" /></div>
               <div className="flex-1">
                 <div className="font-medium text-gray-800 text-sm">{s.label}</div>
                 <div className="text-xs text-gray-400 font-mono mt-0.5">{s.id} · {s.time} · {s.size} · 恢复 {s.restore}</div>
@@ -682,7 +888,7 @@ const DetailSnapshot = ({ instance }) => {
         </div>
         <div className="mt-4 flex gap-2">
           <button className="text-sm px-3 py-2 rounded-lg bg-orange-50 text-orange-700 border border-orange-200 hover:bg-orange-100 flex items-center gap-1"><Zap className="w-4 h-4" />创建 Warm 快照</button>
-          <button className="text-sm px-3 py-2 rounded-lg bg-sky-50 text-sky-700 border border-sky-200 hover:bg-sky-100 flex items-center gap-1"><HardDrive className="w-4 h-4" />创建 Cold 快照</button>
+          <button className="text-sm px-3 py-2 rounded-lg bg-sky-50 text-sky-700 border border-sky-200 hover:bg-sky-100 flex items-center gap-1"><HardDrive className="w-4 h-4" />另存为环境快照</button>
         </div>
       </Card>
 
@@ -694,13 +900,13 @@ const DetailSnapshot = ({ instance }) => {
             <Server className="w-4 h-4 text-blue-600" /><span className="font-medium text-blue-700">{instance.name}</span><span className="text-xs text-blue-400 ml-auto">当前</span>
           </div>
           <div className="ml-4 border-l-2 border-gray-200 pl-4 space-y-2">
-            <div className="flex items-center gap-2 p-2 rounded hover:bg-gray-50">
-              <GitBranch className="w-4 h-4 text-purple-500" /><span className="text-gray-700">explore-v2-a</span><span className="text-xs text-gray-400 ml-auto">2h 前</span>
-            </div>
-            <div className="flex items-center gap-2 p-2 rounded hover:bg-gray-50">
-              <GitBranch className="w-4 h-4 text-purple-500" /><span className="text-gray-700">explore-v2-b</span><span className="text-xs text-gray-400 ml-auto">1h 前</span>
-              <span className="text-[10px] px-1 rounded bg-emerald-100 text-emerald-700">采纳</span>
-            </div>
+            {(instance.forks || []).map(f => (
+              <div key={f.name} className="flex items-center gap-2 p-2 rounded hover:bg-gray-50">
+                <GitBranch className="w-4 h-4 text-purple-500" /><span className="text-gray-700">{f.name}</span><span className="text-xs text-gray-400 ml-auto">{f.ago}</span>
+                {f.adopted && <span className="text-[10px] px-1 rounded bg-emerald-100 text-emerald-700">采纳</span>}
+              </div>
+            ))}
+            {(!instance.forks || instance.forks.length === 0) && <div className="p-2 text-xs text-gray-400">暂无派生分支</div>}
           </div>
         </div>
       </Card>
@@ -727,6 +933,11 @@ const CreateSandbox = () => {
   const [idleTimeout, setIdleTimeout] = useState(300);
   const [maxLifetime, setMaxLifetime] = useState(24);
   const [autoRestart, setAutoRestart] = useState(true);
+  // 下沉触发分档：消息间挂起（低延迟，对标 Cursor hibernate between messages）+ idle 长时间下沉（省钱，对标 auto_stop）
+  const [hibernateBetweenMsgs, setHibernateBetweenMsgs] = useState(true);
+  const [idleSuspendEnabled, setIdleSuspendEnabled] = useState(true);
+  const [prewarmEnabled, setPrewarmEnabled] = useState(true);
+  const [prewarmMin, setPrewarmMin] = useState(1);
   const [egressMode, setEgressMode] = useState('allowlist');
   const [egressList, setEgressList] = useState('api.openai.com\ngithub.com\npypi.org');
   const [probeEnabled, setProbeEnabled] = useState(true);
@@ -756,7 +967,9 @@ const CreateSandbox = () => {
     { label: '镜像结构', value: selectedCustom ? `底座 + ${selectedCustom.name}` : '仅底座' },
     { label: '挂载工具', value: selectedTools.length ? selectedTools.map(t => t.name).join(', ') : '无' },
     { label: '网络出口', value: egressMode === 'open' ? '完全开放' : egressMode === 'deny' ? '完全禁止' : '域名白名单' },
-    { label: 'Idle 超时', value: `${idleTimeout}s 自动挂起` },
+    { label: '消息间挂起', value: hibernateBetweenMsgs ? '开启（低延迟）' : '关闭' },
+    { label: 'Idle 下沉', value: idleSuspendEnabled ? `${idleTimeout}s → 休眠` : '关闭' },
+    { label: '预热池', value: prewarmEnabled ? `${prewarmMin} 台常驻` : '关闭' },
     { label: '最大存活', value: `${maxLifetime}h 强制销毁` },
     { label: '持久卷', value: `${volumeSize} GB` },
   ];
@@ -956,19 +1169,70 @@ const CreateSandbox = () => {
         {/* 生命周期 + 治理 */}
         <Card className="p-6">
           <SectionTitle icon={<Clock className="w-5 h-5 text-blue-500" />} title="生命周期与成本治理"
-            desc="Idle 判定基于真实资源活动（CPU/网络/并发），避免误杀长跑 agent。两窗口模型对标 Knative（grace + stable）。" />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <div>
-              <Label>空闲超时（自动挂起 / 秒）</Label>
-              <input type="number" value={idleTimeout} onChange={e => setIdleTimeout(+e.target.value)}
-                className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-blue-500" />
-              <p className="text-xs text-gray-400 mt-1">无资源活动 N 秒后自动休眠（保留磁盘）</p>
+            desc="下沉触发分两档：消息间挂起（低延迟）与 idle 长时间下沉（省钱）。Idle 判定基于真实资源活动（CPU/网络/并发），避免误杀长跑 agent；两窗口对标 Knative（grace + stable）。" />
+
+          {/* 下沉触发分档 */}
+          <div className="space-y-3">
+            <div className={`p-4 rounded-xl border-2 transition-all ${hibernateBetweenMsgs ? 'border-sky-300 bg-sky-50/40' : 'border-gray-200'}`}>
+              <label className="flex items-center justify-between cursor-pointer">
+                <div className="flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-sky-500" />
+                  <span className="text-sm font-medium text-gray-800">消息间自动挂起</span>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-sky-100 text-sky-600">L1 · 低延迟</span>
+                </div>
+                <input type="checkbox" checked={hibernateBetweenMsgs} onChange={e => setHibernateBetweenMsgs(e.target.checked)} className="rounded" />
+              </label>
+              <p className="text-xs text-gray-500 mt-1.5 ml-6">每轮工具执行结束、等待下条消息时挂起 VM（保内存），消息到达即恢复。对标 Cursor「hibernate and resume agent VMs between messages」——让来回切换近零延迟。</p>
             </div>
+
+            <div className={`p-4 rounded-xl border-2 transition-all ${idleSuspendEnabled ? 'border-amber-300 bg-amber-50/40' : 'border-gray-200'}`}>
+              <label className="flex items-center justify-between cursor-pointer">
+                <div className="flex items-center gap-2">
+                  <Power className="w-4 h-4 text-amber-500" />
+                  <span className="text-sm font-medium text-gray-800">Idle 长时间下沉</span>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-600">L2 · 省钱</span>
+                </div>
+                <input type="checkbox" checked={idleSuspendEnabled} onChange={e => setIdleSuspendEnabled(e.target.checked)} className="rounded" />
+              </label>
+              <p className="text-xs text-gray-500 mt-1.5 ml-6">无真实资源活动（CPU/网络/并发）超阈值后，从挂起进一步下沉到休眠（内存落盘），省更多钱、恢复稍慢。对标 Daytona autoStop / Fly auto_stop。</p>
+              {idleSuspendEnabled && (
+                <div className="mt-3 ml-6 flex items-center gap-3">
+                  <Label className="whitespace-nowrap mb-0">空闲超时（秒）</Label>
+                  <input type="number" value={idleTimeout} onChange={e => setIdleTimeout(+e.target.value)}
+                    className="w-28 px-3 py-1.5 border border-gray-300 rounded-lg text-sm outline-none focus:border-blue-500" />
+                  <span className="text-xs text-gray-400">grace + stable 两窗口判定</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* 预热池 */}
+          <div className={`mt-4 p-4 rounded-xl border-2 transition-all ${prewarmEnabled ? 'border-blue-300 bg-blue-50/40' : 'border-gray-200'}`}>
+            <label className="flex items-center justify-between cursor-pointer">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-blue-500" />
+                <span className="text-sm font-medium text-gray-800">预热池（min-instances）</span>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-600">缓解冷启动</span>
+              </div>
+              <input type="checkbox" checked={prewarmEnabled} onChange={e => setPrewarmEnabled(e.target.checked)} className="rounded" />
+            </label>
+            <p className="text-xs text-gray-500 mt-1.5 ml-6">常驻若干已就绪实例，新 agent 命中即用、跳过冷启动。对标 Cursor prewarmed VMs。代价：常驻实例持续计费，按预算权衡。</p>
+            {prewarmEnabled && (
+              <div className="mt-3 ml-6 flex items-center gap-3">
+                <Label className="whitespace-nowrap mb-0">常驻数量</Label>
+                <input type="number" min="0" value={prewarmMin} onChange={e => setPrewarmMin(+e.target.value)}
+                  className="w-24 px-3 py-1.5 border border-gray-300 rounded-lg text-sm outline-none focus:border-blue-500" />
+                <span className="text-xs text-gray-400">台</span>
+              </div>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-4">
             <div>
               <Label>最大存活时长（强制销毁 / 小时）</Label>
               <input type="number" value={maxLifetime} onChange={e => setMaxLifetime(+e.target.value)}
                 className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-blue-500" />
-              <p className="text-xs text-gray-400 mt-1">防失控成本与逃逸风险的硬性上限</p>
+              <p className="text-xs text-gray-400 mt-1">防失控成本与逃逸风险的硬性上限（休眠期间时钟继续走）</p>
             </div>
           </div>
           <label className="flex items-center gap-2 mt-4 cursor-pointer">
@@ -1249,7 +1513,70 @@ const TemplateLibrary = ({ setActiveTab }) => (
   </div>
 );
 
-/* ========================= 8. 网络/域名管理 ============================ */
+/* ===================== 8. 环境快照（Cold，开发者拥有） ================== */
+/* Cold 磁盘快照作为「可复用环境来源」独立成页——语义是「新实例从这份已装好依赖的环境起跑」，
+   而非「恢复某个实例」。开发者拥有；运维治理 TTL/配额/失效降级。对标 Cursor
+   .cursor/environment.json 的 "snapshot" 字段。 */
+const EnvironmentSnapshots = ({ setActiveTab }) => {
+  const ENV_META = {
+    ready:     { label: '可用',   cls: 'bg-emerald-50 text-emerald-700' },
+    degraded:  { label: '已降级', cls: 'bg-amber-50 text-amber-700' },
+    expired:   { label: '已过期', cls: 'bg-gray-100 text-gray-400' },
+  };
+  return (
+    <div className="space-y-4">
+      <Card className="p-5">
+        <SectionTitle icon={<HardDrive className="w-5 h-5 text-sky-500" />} title="环境快照库（Cold · 磁盘级）"
+          desc="把「装好依赖的开发环境」存为可复用快照，新 agent 可直接从快照起跑，省去重装依赖。失效时系统自动降级为默认 base image（标「环境就绪·有警告」），不阻塞 agent 启动。"
+          right={<button className="flex items-center gap-1 bg-blue-600 text-white px-3 py-1.5 rounded-md text-sm hover:bg-blue-700"><Plus className="w-4 h-4" /> 新建环境快照</button>} />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {ENV_SNAPSHOTS.map(s => {
+            const m = ENV_META[s.status];
+            return (
+              <div key={s.id} className={`p-4 rounded-xl border transition-all ${s.status === 'expired' ? 'border-gray-200 opacity-60' : 'border-gray-200 hover:border-sky-300 hover:shadow-sm'}`}>
+                <div className="flex justify-between items-start gap-2">
+                  <div className="flex items-center gap-2"><HardDrive className="w-5 h-5 text-sky-500" /><span className="font-semibold text-gray-800 text-sm">{s.label}</span></div>
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full shrink-0 ${m.cls}`}>{m.label}</span>
+                </div>
+                <div className="text-xs text-gray-400 font-mono mt-2">{s.id}</div>
+                <div className="mt-3 space-y-1 text-xs text-gray-600">
+                  <div className="flex justify-between"><span className="text-gray-400">来源实例</span><span className="font-mono">{s.source}</span></div>
+                  <div className="flex justify-between"><span className="text-gray-400">大小 / TTL</span><span>{s.size} · {s.ttl}</span></div>
+                  <div className="flex justify-between"><span className="text-gray-400">引用</span><span>{s.refs} 实例</span></div>
+                  <div className="pt-1"><span className="text-gray-400">已装依赖</span><div className="text-gray-500 font-mono mt-0.5 break-all">{s.deps}</div></div>
+                </div>
+                {s.status === 'degraded' && (
+                  <div className="mt-2 text-[11px] px-2 py-1 rounded bg-amber-50 text-amber-700 border border-amber-200 flex items-start gap-1">
+                    <AlertTriangle className="w-3 h-3 mt-0.5 shrink-0" />快照失效，新 agent 已降级用默认环境
+                  </div>
+                )}
+                <div className="flex gap-2 mt-4">
+                  <button onClick={() => setActiveTab && setActiveTab('create')} disabled={s.status === 'expired'}
+                    className={`flex-1 text-xs py-1.5 rounded flex items-center justify-center gap-1 ${s.status === 'expired' ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-sky-600 text-white hover:bg-sky-700'}`}>
+                    <Play className="w-3 h-3" />从此环境创建
+                  </button>
+                  <button disabled={s.status === 'expired'} className="text-xs px-2 py-1.5 rounded border border-gray-200 hover:bg-gray-50 disabled:opacity-40"><Edit2 className="w-3 h-3" /></button>
+                  <button className="text-xs px-2 py-1.5 rounded border border-gray-200 text-gray-400 hover:text-red-500"><Trash2 className="w-3 h-3" /></button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </Card>
+      <Card className="p-5">
+        <SectionTitle icon={<Info className="w-5 h-5 text-blue-500" />} title="为什么环境快照独立于此处？"
+          desc="三层状态归口：会话状态系统独管 / VM 运行态系统跑运维可覆盖 / 环境快照开发者拥有。" />
+        <div className="text-sm text-gray-600 leading-relaxed space-y-2">
+          <p>• <strong>语义不同</strong>：实例详情的 Warm 快照是「冻住这个跑了一半的实例、稍后接着跑」（恢复运行态）；环境快照是「把这份装好依赖的环境存下来、开新实例时复用」（环境来源）。两者不是一回事。</p>
+          <p>• <strong>归属不同</strong>：环境快照绑定你的代码库与依赖，是开发者资产，跨实例共享；Warm 快照绑定具体实例的运行态，用完即弃。</p>
+          <p>• <strong>对标</strong>：Cursor 的 <code className="text-xs bg-gray-100 px-1 rounded">.cursor/environment.json</code> 里 <code className="text-xs bg-gray-100 px-1 rounded">"snapshot"</code> 字段引用的正是这类环境快照，作为新 agent 的环境来源。</p>
+        </div>
+      </Card>
+    </div>
+  );
+};
+
+/* ========================= 9. 网络/域名管理 ============================ */
 
 const NetworkManager = () => (
   <div className="space-y-4">
@@ -1317,6 +1644,117 @@ const NetworkManager = () => (
   </div>
 );
 
+/* ========================= 10. 系统设置（全局策略默认） ================= */
+/* 组织级默认值：新实例未显式配置时继承此处。三类策略分别归口：
+   单实例→创建页 / 钱→成本配额页 / 全局默认→此页。对应 DESIGN.md P2 系统设置模块。 */
+const SystemSettings = () => {
+  // 生命周期默认
+  const [defHibernateBetween, setDefHibernateBetween] = useState(true);
+  const [defIdleTimeout, setDefIdleTimeout] = useState(300);
+  const [defMaxLifetime, setDefMaxLifetime] = useState(24);
+  const [defPrewarmEnabled, setDefPrewarmEnabled] = useState(true);
+  const [defPrewarmMin, setDefPrewarmMin] = useState(1);
+  // 环境快照默认
+  const [defSnapTtl, setDefSnapTtl] = useState(14);
+  const [defSnapFallback, setDefSnapFallback] = useState(true);
+  // 安全默认
+  const [defEgress, setDefEgress] = useState('allowlist');
+  const [defDockerCli, setDefDockerCli] = useState(false);
+
+  const Toggle = ({ on, setOn, label, desc }) => (
+    <label className="flex items-start justify-between gap-3 py-2.5 cursor-pointer">
+      <div>
+        <div className="text-sm text-gray-800">{label}</div>
+        <div className="text-xs text-gray-400 mt-0.5">{desc}</div>
+      </div>
+      <button onClick={() => setOn(!on)} className={`relative shrink-0 w-9 h-5 rounded-full transition-colors mt-0.5 ${on ? 'bg-blue-600' : 'bg-gray-300'}`}>
+        <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white transition-transform ${on ? 'translate-x-4' : ''}`} />
+      </button>
+    </label>
+  );
+
+  return (
+    <div className="space-y-4">
+      <Card className="p-5">
+        <SectionTitle icon={<Clock className="w-5 h-5 text-blue-500" />} title="生命周期默认策略"
+          desc="新实例未显式配置时继承这些默认值。对应「系统怎么管生命周期」的全局规矩——创建页的初始值即取自此处。" />
+        <div className="divide-y divide-gray-100">
+          <Toggle on={defHibernateBetween} setOn={setDefHibernateBetween} label="消息间自动挂起（默认开）"
+            desc="每轮工具执行后、等待下条消息时挂起 VM（保内存），消息到达即恢复。近零延迟来回切换。" />
+          <div className="flex items-center justify-between py-2.5">
+            <div><div className="text-sm text-gray-800">默认 Idle 下沉超时</div><div className="text-xs text-gray-400 mt-0.5">无真实资源活动多久后，从挂起进一步下沉到休眠（落盘省钱）</div></div>
+            <div className="flex items-center gap-2">
+              <input type="number" value={defIdleTimeout} onChange={e => setDefIdleTimeout(+e.target.value)} className="w-24 px-3 py-1.5 border border-gray-300 rounded-lg text-sm outline-none focus:border-blue-500" />
+              <span className="text-xs text-gray-400">秒</span>
+            </div>
+          </div>
+          <div className="flex items-center justify-between py-2.5">
+            <div><div className="text-sm text-gray-800">默认最大存活时长</div><div className="text-xs text-gray-400 mt-0.5">强制销毁的硬上限，休眠期间时钟继续走</div></div>
+            <div className="flex items-center gap-2">
+              <input type="number" value={defMaxLifetime} onChange={e => setDefMaxLifetime(+e.target.value)} className="w-24 px-3 py-1.5 border border-gray-300 rounded-lg text-sm outline-none focus:border-blue-500" />
+              <span className="text-xs text-gray-400">小时</span>
+            </div>
+          </div>
+          <Toggle on={defPrewarmEnabled} setOn={setDefPrewarmEnabled} label="预热池（默认开）"
+            desc="常驻若干已就绪实例，新 agent 命中即用、跳过冷启动。代价：常驻实例持续计费。" />
+          {defPrewarmEnabled && (
+            <div className="flex items-center justify-between py-2.5 pl-4">
+              <div className="text-sm text-gray-700">默认预热池大小</div>
+              <div className="flex items-center gap-2">
+                <input type="number" min="0" value={defPrewarmMin} onChange={e => setDefPrewarmMin(+e.target.value)} className="w-24 px-3 py-1.5 border border-gray-300 rounded-lg text-sm outline-none focus:border-blue-500" />
+                <span className="text-xs text-gray-400">台</span>
+              </div>
+            </div>
+          )}
+        </div>
+      </Card>
+
+      <Card className="p-5">
+        <SectionTitle icon={<HardDrive className="w-5 h-5 text-sky-500" />} title="环境快照默认策略"
+          desc="Cold 环境快照的全局默认：多久过期、失效时如何处理。" />
+        <div className="divide-y divide-gray-100">
+          <div className="flex items-center justify-between py-2.5">
+            <div><div className="text-sm text-gray-800">默认快照 TTL</div><div className="text-xs text-gray-400 mt-0.5">环境快照创建后保留多久，过期自动标记不可用</div></div>
+            <div className="flex items-center gap-2">
+              <input type="number" value={defSnapTtl} onChange={e => setDefSnapTtl(+e.target.value)} className="w-24 px-3 py-1.5 border border-gray-300 rounded-lg text-sm outline-none focus:border-blue-500" />
+              <span className="text-xs text-gray-400">天</span>
+            </div>
+          </div>
+          <Toggle on={defSnapFallback} setOn={setDefSnapFallback} label="失效自动降级（默认开）"
+            desc="快照过期/失效时，不阻塞 agent 启动，自动降级为默认 base image 并标「环境就绪·有警告」。" />
+        </div>
+      </Card>
+
+      <Card className="p-5">
+        <SectionTitle icon={<ShieldAlert className="w-5 h-5 text-amber-500" />} title="安全默认策略"
+          desc="新实例的安全默认值。agent 执行不可信代码、自主发网络请求，出口与高权限工具默认从严。" />
+        <div className="divide-y divide-gray-100">
+          <div className="flex items-center justify-between py-2.5">
+            <div><div className="text-sm text-gray-800">默认出口（Egress）策略</div><div className="text-xs text-gray-400 mt-0.5">防 agent 数据外泄的关键项。白名单=仅允许指定域名出站</div></div>
+            <select value={defEgress} onChange={e => setDefEgress(e.target.value)} className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm bg-white outline-none focus:border-blue-500">
+              <option value="allowlist">域名白名单（推荐）</option>
+              <option value="deny">完全禁止</option>
+              <option value="open">完全开放（不安全）</option>
+            </select>
+          </div>
+          <Toggle on={defDockerCli} setOn={setDefDockerCli} label="docker-cli 高权限工具（默认禁用）"
+            desc="DooD（挂载宿主 Docker）属高权限工具，默认禁用，仅在受信场景手动开启。" />
+        </div>
+      </Card>
+
+      <Card className="p-5 bg-blue-50/40 border-blue-100">
+        <div className="flex items-start gap-2 text-sm text-gray-600">
+          <Info className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
+          <div>
+            <p className="font-medium text-gray-700 mb-1">策略三层归口</p>
+            <p className="text-xs leading-relaxed">单实例策略在 <strong>创建页</strong> 设（覆盖此处默认）；花钱策略在 <strong>成本配额页</strong> 设（预算/配额/超限动作）；全局默认值在此页设，新实例未显式配置时继承。三者结合，就是「系统按规矩自动管」的全部规矩来源。</p>
+          </div>
+        </div>
+      </Card>
+    </div>
+  );
+};
+
 /* ============================ App Root ================================== */
 
 export default function SandboxManager() {
@@ -1334,9 +1772,11 @@ export default function SandboxManager() {
   } else if (activeTab === 'create')    content = <CreateSandbox />;
   else if (activeTab === 'cost')        content = <CostDashboard />;
   else if (activeTab === 'images')      content = <ImageLibrary />;
+  else if (activeTab === 'envsnap')     content = <EnvironmentSnapshots setActiveTab={setActiveTab} />;
   else if (activeTab === 'tools')       content = <ToolLibrary />;
   else if (activeTab === 'templates')   content = <TemplateLibrary setActiveTab={setActiveTab} />;
   else if (activeTab === 'network')     content = <NetworkManager />;
+  else if (activeTab === 'settings')    content = <SystemSettings />;
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans">
